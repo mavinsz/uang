@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Aplikasi Pencatat Keuangan</title>
+</head>
+<body>
+  <h1>Aplikasi Pencatat Keuangan</h1>
+  
+  <!-- Bagian Tambah Pemasukan -->
+  <h2>Tambah Pemasukan</h2>
+  <form id="incomeForm">
+    <div class="form-group">
+      <label for="incomeName">Nama:</label>
+      <input type="text" id="incomeName" name="incomeName" required>
+    </div>
+    <div class="form-group">
+      <label for="incomeAmount">Jumlah:</label>
+      <input type="number" id="incomeAmount" name="incomeAmount" required>
+    </div>
+    <div class="form-group">
+      <input type="submit" value="Tambah Pemasukan">
+    </div>
+  </form>
+
+  <!-- Bagian Tambah Pengeluaran -->
+  <h2>Tambah Pengeluaran</h2>
+  <form id="expenseForm">
+    <div class="form-group">
+      <label for="expenseName">Nama:</label>
+      <input type="text" id="expenseName" name="expenseName" required>
+    </div>
+    <div class="form-group">
+      <label for="expenseAmount">Jumlah:</label>
+      <input type="number" id="expenseAmount" name="expenseAmount" required>
+    </div>
+    <div class="form-group">
+      <input type="submit" value="Tambah Pengeluaran">
+    </div>
+  </form>
+
+  <!-- Bagian Daftar Transaksi -->
+  <h2>Daftar Transaksi</h2>
+  <div class="transactions">
+    <table id="transactionTable">
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Jumlah</th>
+          <th>Kategori</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="transactionTableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Bagian Ringkasan Keuangan -->
+  <h2>Ringkasan Keuangan</h2>
+  <div>
+    <strong>Pemasukan:</strong> <span id="incomeTotal">0</span> |
+    <strong>Pengeluaran:</strong> <span id="expenseTotal">0</span> |
+    <strong>Saldo:</strong> <span id="balance">0</span>
+  </div>
+
+  <script>
+    const incomeForm = document.getElementById('incomeForm');
+    const expenseForm = document.getElementById('expenseForm');
+    const transactionTableBody = document.getElementById('transactionTableBody');
+    const incomeTotalElement = document.getElementById('incomeTotal');
+    const expenseTotalElement = document.getElementById('expenseTotal');
+    const balanceElement = document.getElementById('balance');
+
+    incomeForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const name = document.getElementById('incomeName').value;
+      const amount = parseFloat(document.getElementById('incomeAmount').value);
+
+      if (!isNaN(amount) && amount !== 0) {
+        const newRow = transactionTableBody.insertRow();
+        const nameCell = newRow.insertCell();
+        const amountCell = newRow.insertCell();
+        const categoryCell = newRow.insertCell();
+        const actionCell = newRow.insertCell();
+
+        nameCell.innerText = name;
+        amountCell.innerText = amount.toFixed(2);
+        categoryCell.innerText = 'Pemasukan';
+        actionCell.innerHTML = '<button class="delete-button" onclick="deleteTransaction(this)">Hapus</button>';
+
+        incomeTotalElement.innerText = (parseFloat(incomeTotalElement.innerText) + amount).toFixed(2);
+        balanceElement.innerText = (parseFloat(balanceElement.innerText) + amount).toFixed(2);
+      }
+
+      incomeForm.reset();
+    });
+
+    expenseForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const name = document.getElementById('expenseName').value;
+      const amount = parseFloat(document.getElementById('expenseAmount').value);
+
+      if (!isNaN(amount) && amount !== 0) {
+        const newRow = transactionTableBody.insertRow();
+        const nameCell = newRow.insertCell();
+        const amountCell = newRow.insertCell();
+        const categoryCell = newRow.insertCell();
+        const actionCell = newRow.insertCell();
+
+        nameCell.innerText = name;
+        amountCell.innerText = amount.toFixed(2);
+        categoryCell.innerText = 'Pengeluaran';
+        actionCell.innerHTML = '<button class="delete-button" onclick="deleteTransaction(this)">Hapus</button>';
+
+        expenseTotalElement.innerText = (parseFloat(expenseTotalElement.innerText) + amount).toFixed(2);
+        balanceElement.innerText = (parseFloat(balanceElement.innerText) - amount).toFixed(2);
+      }
+
+      expenseForm.reset();
+    });
+
+    function deleteTransaction(button) {
+      const row = button.parentNode.parentNode;
+      const category = row.getElementsByTagName('td')[2].innerText;
+      const amount = parseFloat(row.getElementsByTagName('td')[1].innerText);
+    
+      if (category === 'Pemasukan') {
+        incomeTotalElement.innerText = (parseFloat(incomeTotalElement.innerText) - amount).toFixed(2);
+        balanceElement.innerText = (parseFloat(balanceElement.innerText) - amount).toFixed(2);
+      } else if (category === 'Pengeluaran') {
+        expenseTotalElement.innerText = (parseFloat(expenseTotalElement.innerText) - amount).toFixed(2);
+        balanceElement.innerText = (parseFloat(balanceElement.innerText) + amount).toFixed(2);
+      }
+    
+      row.remove();
+    }
+  </script>
+</body>
+</html>
